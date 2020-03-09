@@ -52,7 +52,7 @@ RSpec.describe Cpro::Cryptcp do
     context 'with raised hash_alg opt' do
       let(:opts) { { hash_alg: :gost3411_2012_1024 } }
 
-      it { expect { subject[2] }.to raise_error(ArgumentError) }
+      it { expect { subject[2] }.to raise_error(Cpro::Error) }
     end
   end
 
@@ -100,6 +100,8 @@ RSpec.describe Cpro::Cryptcp do
   describe '.hash' do
     subject { described_class.hash('asd', opts) }
 
+    after { FileUtils.rm_rf tmp_dir }
+
     context 'with default opts' do
       let(:opts) { {} }
 
@@ -123,6 +125,24 @@ RSpec.describe Cpro::Cryptcp do
       let(:opts) { { hash_alg: :gost3411_2012_512 } }
 
       it { expect(subject).to eq('39D19C0D5879304D640712996693798C4F33C4260D0F8C5D06A5FDC81AD891A9220B04A9A17CDF63EDCA856452FABC632671FC623A492444E47E7F9610DEB0A9') }
+    end
+  end
+
+  describe '.sign' do
+    subject { described_class.sign('hello world', opts) }
+
+    after { FileUtils.rm_rf tmp_dir }
+
+    context 'with dn option' do
+      let(:opts) { { dn: { CN: 'Иван Иванов' }, debug: true } }
+
+      it { expect(subject).to eq('/opt/cprocsp/bin/amd64/cryptcp -dn "CN=Иван Иванов" -hashAlg 1.2.643.7.1.1.2.2 -sign -dir /tmp/cpro-test -provtype 80 -detach /tmp/cpro-test/pfile-1') }
+    end
+
+    context 'with detach option' do
+      let(:opts) { { detach: false, debug: true } }
+
+      it { expect(subject).to eq('/opt/cprocsp/bin/amd64/cryptcp  -hashAlg 1.2.643.7.1.1.2.2 -sign -dir /tmp/cpro-test -provtype 80  /tmp/cpro-test/pfile-1') }
     end
   end
 end

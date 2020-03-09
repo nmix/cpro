@@ -22,7 +22,6 @@ module Cpro
       # Функция хэширования строки
       # @param msg [String] строка, хэш которой определяем
       # @param opts [Hash] опции метода
-      # @option opts [Hash] :dn параметры поиска сертификата
       # @option opts [Symbol] :hash_alg алгоритм хэширования,
       #   варианты HASH_ALGS
       # @option opts [bool] :debug отладочный вывод команды. Команда
@@ -45,6 +44,41 @@ module Cpro
         end
       end
 
+      # Функция подписи строки
+      # @param msg [String] строка, которую хотим подписать
+      # @param opts [Hash] опции метода
+      # @option opts [Hash] :dn параметры поиска сертификата
+      # @option opts [Symbol] :hash_alg алгоритм хэширования,
+      #   варианты HASH_ALGS
+      # @option opts [bool] :detach, "отсоединенная" подпись,
+      #   по-умолчанию true
+      # @option opts [bool] :debug отладочный вывод команды. Команда
+      #   не исполняется
+      # @return [String] подпись строки либо команда на выполнение
+      def sign(msg, opts = {})
+        detach_opt, ext = if opts.fetch(:detach, true) == true
+                            ['-detach', 'sgn']
+                          else
+                            ['', 'sig']
+                          end
+        
+        detach = opts.fetch(:detach, true)
+        sign_cmd = argv(opts).push(
+          '-sign',
+          "-dir #{config.cpro_tmp_dir}",
+          "-provtype 80", # https://www.altlinux.org/КриптоПро#Настройка_криптопровайдера
+          detach_opt,
+          mk_pipe_file
+        ).join(' ')
+        if opts.key?(:debug) && opts[:debug] == true
+          return sign_cmd
+        end
+
+        system_call(msg, ext) do
+          stdout, stderr, status = Open3.capture3(sign_cmd)
+        end
+      end
+
       # Вызов системной команды с работой через pipe-файлы
       # @param msg [String] контент входного файла 
       # @param ext [String] расширение для выходного файла
@@ -63,8 +97,15 @@ module Cpro
           File.open(output_pipe_file, 'r') { |f| f.read }
         end
 
-        yield if block_given?
-        
+        if block_given?
+          stdout, stderr, status = yield
+          if status.to_i != 0
+            input_thr.terminate
+            output_thr.terminate
+            raise Cpro::Error.new(stdout: stdout, stderr: stderr, status: status)
+          end
+        end
+
         input_thr.join
         output_thr.join
         output_thr.value
@@ -112,7 +153,7 @@ module Cpro
 
         # --- hashAlg option
         hash_alg_opt = opts.key?(:hash_alg) ? opts[:hash_alg] : config.hash_alg
-        raise ArgumentError, "unknown hash_alg :#{hash_alg_opt}" \
+        raise Cpro::Error, "unknown hash_alg :#{hash_alg_opt}" \
           unless HASH_ALGS.include?(hash_alg_opt)
 
         hash_alg_oid = if hash_alg_opt == :gost3411_94

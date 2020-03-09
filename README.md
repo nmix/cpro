@@ -9,11 +9,19 @@
 
 ```ruby
 # Произвести хэширование строки
-# --- по алгоритму ГОСТ Р 34.11-2012 256bit
-CPro::Cryptcp.config.dn = {CN: 'Иван Иванов'}		# параметры поиска сертификата в локальном хранилище
-CPro::Cryptcp.config.hash_alg = :gost3411_2012_256	# алгоритм хэширования
-CPro::Cryptcp.hash('Hello world')
-#=> "ABCDE..."
+
+# --- по алгоритму ГОСТ Р 34.11-94
+Cpro::Cryptcp.hash('asd', hash_alg: :gost3411_94)
+=> "3C1C898C128E3C5A764D2E6A0071BADE79370D3531B501E06D56FA2DFD480BD3"
+
+# --- по алгоритму ГОСТ Р 34.11-2012 256bit (по умолчанию)
+# Cpro::Cryptcp.hash('asd')
+Cpro::Cryptcp.hash('asd', hash_alg: :gost3411_2012_256)
+=> "618A785A263348C15CA46D939105EBA105359DD3B84991190480B2F47405967D"
+
+# --- по алгоритму ГОСТ Р 34.11-2012 512bit
+Cpro::Cryptcp.hash('asd', hash_alg: :gost3411_2012_512)
+=> "39D19C0D5879304D640712996693798C4F33C4260D0F8C5D06A5FDC81AD891A9220B04A9A17CDF63EDCA856452FABC632671FC623A492444E47E7F9610DEB0A9"
 ```
 
 
@@ -161,7 +169,20 @@ pcsc_scan
 
 ## Установка библиотеки
 
-```bash
-git submodule add REPO_URL PATH
+### Rails
+
+Gemfile
+
+```ruby
+gem 'cpro', path: 'vendor/cpro'
 ```
+
+Terminal
+
+```bash
+git submodule add git@bitbucket.org:zoidenberg/cpro.git vendor/cpro
+bundle
+```
+
+
 

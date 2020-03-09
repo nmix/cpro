@@ -5,7 +5,7 @@ module Cpro
     extend Dry::Configurable
     extend Dry::Core::ClassAttributes
 
-    HASH_ALGS = %i[gost_3411_94 gost3411_2012_256 gost3411_2012_512]
+    HASH_ALGS = %i[gost3411_94 gost3411_2012_256 gost3411_2012_512]
 
     # директория для временных файлов
     setting :cpro_tmp_dir, '/tmp/cpro'
@@ -29,7 +29,7 @@ module Cpro
       #   не исполняется
       # @return [String/nil] хэш строки
       def hash(msg, opts = {})
-        hash_cmd = argv.push(
+        hash_cmd = argv(opts).push(
           '-hash',
           '-hex',
           "-dir #{config.cpro_tmp_dir}",
@@ -115,11 +115,11 @@ module Cpro
         raise ArgumentError, "unknown hash_alg :#{hash_alg_opt}" \
           unless HASH_ALGS.include?(hash_alg_opt)
 
-        hash_alg_oid = if hash_alg_opt == :gost_3411_94
+        hash_alg_oid = if hash_alg_opt == :gost3411_94
                         '1.2.643.2.2.9'
                       elsif hash_alg_opt == :gost3411_2012_256
                         '1.2.643.7.1.1.2.2'
-                      else
+                      else # gost3411_2012_512
                         '1.2.643.7.1.1.2.3'
                       end
         hash_alg = "-hashAlg #{hash_alg_oid}"

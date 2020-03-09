@@ -98,8 +98,31 @@ RSpec.describe Cpro::Cryptcp do
   end
 
   describe '.hash' do
-    subject { described_class.hash('asd') }
+    subject { described_class.hash('asd', opts) }
 
-    it { expect(subject).to eq('618A785A263348C15CA46D939105EBA105359DD3B84991190480B2F47405967D') }
+    context 'with default opts' do
+      let(:opts) { {} }
+
+      it { expect(subject).to eq('618A785A263348C15CA46D939105EBA105359DD3B84991190480B2F47405967D') }
+    end
+
+    context 'with hash_alg gost3411_94' do
+      let(:opts) { { hash_alg: :gost3411_94 } }
+
+      it { expect(subject).to eq('3C1C898C128E3C5A764D2E6A0071BADE79370D3531B501E06D56FA2DFD480BD3') }
+    end
+    
+
+    context 'with hash_alg gost3411_2012_256' do
+      let(:opts) { { hash_alg: :gost3411_2012_256 } }
+
+      it { expect(subject).to eq('618A785A263348C15CA46D939105EBA105359DD3B84991190480B2F47405967D') }
+    end
+
+    context 'with hash_alg gost3411_2012_512' do
+      let(:opts) { { hash_alg: :gost3411_2012_512 } }
+
+      it { expect(subject).to eq('39D19C0D5879304D640712996693798C4F33C4260D0F8C5D06A5FDC81AD891A9220B04A9A17CDF63EDCA856452FABC632671FC623A492444E47E7F9610DEB0A9') }
+    end
   end
 end

@@ -2,6 +2,7 @@
 
 require 'dry-configurable'
 require 'dry/core/class_attributes'
+require 'open3'
 
 require 'cpro/version'
 require 'cpro/cryptcp'

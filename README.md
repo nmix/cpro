@@ -184,5 +184,11 @@ git submodule add git@bitbucket.org:zoidenberg/cpro.git vendor/cpro
 bundle
 ```
 
+Обновление библиотеки
+
+```bash
+git submodule update --remote vendor/cpro
+```
+
 
 

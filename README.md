@@ -26,7 +26,7 @@ Cpro::Cryptcp.hash('asd', hash_alg: :gost3411_2012_512)
 # Подпись строки
 
 # В локальном хранилище должен быть установлен сертификат с CN=Иван Иванов
-Cpro::Cryptcp.sign('hello world', debug: false, dn: { CN: 'Иван Иванов' })
+Cpro::Cryptcp.sign('hello world', dn: { CN: 'Иван Иванов' })
 => "MIAGCSqGSIb3DQEHAqCAMIAC..."
 ```
 
@@ -194,6 +194,22 @@ bundle
 
 ```bash
 git submodule update --remote vendor/cpro
+```
+
+
+
+## Тестирование
+
+```bash
+git clone git@bitbucket.org:zoidenberg/cpro.git
+cd cpro
+bundle
+bundle exec rspec spec
+
+# отладочный запуск
+irb -Ilib -rcpro
+irb(main):001:0> Cpro::Cryptcp.hash('asd')
+=> "618A785A263348C15CA46D939105EBA105359DD3B84991190480B2F47405967D"
 ```
 
 

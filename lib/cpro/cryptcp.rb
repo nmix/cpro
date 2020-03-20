@@ -165,7 +165,7 @@ module Cpro
                       end
         hash_alg = "-hashAlg #{hash_alg_oid}"
 
-        [cmd, dn, hash_alg]
+        ['yes |', cmd, dn, hash_alg]
       end
     end
   end

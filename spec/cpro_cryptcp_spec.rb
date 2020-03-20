@@ -24,7 +24,7 @@ RSpec.describe Cpro::Cryptcp do
     context 'with default values' do
       let(:opts) { {} }
 
-      it { expect(subject.first).to eq('/opt/cprocsp/bin/amd64/cryptcp') }
+      it { expect(subject.first).to end_with('/opt/cprocsp/bin/amd64/cryptcp') }
 
       it { expect(subject[1]).to be_nil }
 
@@ -34,7 +34,7 @@ RSpec.describe Cpro::Cryptcp do
     context 'with cryptcp_bin_dir opt' do
       let(:opts) { { cryptcp_bin_dir: '/usr/local/bin' } }
 
-      it { expect(subject.first).to eq('/usr/local/bin/cryptcp') }
+      it { expect(subject.first).to end_with('/usr/local/bin/cryptcp') }
     end
 
     context 'with dn opt' do
@@ -136,13 +136,13 @@ RSpec.describe Cpro::Cryptcp do
     context 'with dn option' do
       let(:opts) { { dn: { CN: 'Иван Иванов' }, debug: true } }
 
-      it { expect(subject).to eq('/opt/cprocsp/bin/amd64/cryptcp -dn "CN=Иван Иванов" -hashAlg 1.2.643.7.1.1.2.2 -sign -dir /tmp/cpro-test -provtype 80 -detach /tmp/cpro-test/pfile-1') }
+      it { expect(subject).to end_with('/opt/cprocsp/bin/amd64/cryptcp -dn "CN=Иван Иванов" -hashAlg 1.2.643.7.1.1.2.2 -sign -dir /tmp/cpro-test -provtype 80 -detach /tmp/cpro-test/pfile-1') }
     end
 
     context 'with detach option' do
       let(:opts) { { detach: false, debug: true } }
 
-      it { expect(subject).to eq('/opt/cprocsp/bin/amd64/cryptcp  -hashAlg 1.2.643.7.1.1.2.2 -sign -dir /tmp/cpro-test -provtype 80  /tmp/cpro-test/pfile-1') }
+      it { expect(subject).to end_with('/opt/cprocsp/bin/amd64/cryptcp  -hashAlg 1.2.643.7.1.1.2.2 -sign -dir /tmp/cpro-test -provtype 80  /tmp/cpro-test/pfile-1') }
     end
   end
 end

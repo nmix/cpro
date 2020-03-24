@@ -142,7 +142,13 @@ RSpec.describe Cpro::Cryptcp do
     context 'with detach option' do
       let(:opts) { { detach: false, debug: true } }
 
-      it { expect(subject).to end_with('/opt/cprocsp/bin/amd64/cryptcp  -hashAlg 1.2.643.7.1.1.2.2 -sign -dir /tmp/cpro-test -provtype 80  /tmp/cpro-test/pfile-1') }
+      it { expect(subject).to end_with('/opt/cprocsp/bin/amd64/cryptcp -hashAlg 1.2.643.7.1.1.2.2 -sign -dir /tmp/cpro-test -provtype 80 /tmp/cpro-test/pfile-1') }
+    end
+
+    context 'with pin option' do
+      let(:opts) { { pin: '123', debug: true } }
+
+      it { expect(subject).to end_with('/opt/cprocsp/bin/amd64/cryptcp -hashAlg 1.2.643.7.1.1.2.2 -sign -dir /tmp/cpro-test -provtype 80 -detach -pin 123 /tmp/cpro-test/pfile-1') }
     end
   end
 end

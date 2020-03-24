@@ -52,6 +52,9 @@ module Cpro
       #   варианты HASH_ALGS
       # @option opts [bool] :detach, "отсоединенная" подпись,
       #   по-умолчанию true
+      # @option opts [String] :pin, пароль ключевого контейнера,
+      #   если не указывать, то для запроса пароля будет вызываться
+      #   диалоговое окно
       # @option opts [bool] :debug отладочный вывод команды. Команда
       #   не исполняется
       # @return [String] подпись строки либо команда на выполнение
@@ -61,6 +64,8 @@ module Cpro
                           else
                             ['', 'sig']
                           end
+
+        pin_opt = opts[:pin] ? "-pin #{opts[:pin]}" : ''
         
         detach = opts.fetch(:detach, true)
         sign_cmd = argv(opts).push(
@@ -68,8 +73,9 @@ module Cpro
           "-dir #{config.cpro_tmp_dir}",
           "-provtype 80", # https://www.altlinux.org/КриптоПро#Настройка_криптопровайдера
           detach_opt,
+          pin_opt,
           mk_pipe_file
-        ).join(' ')
+        ).join(' ').squeeze(' ')
         if opts.key?(:debug) && opts[:debug] == true
           return sign_cmd
         end

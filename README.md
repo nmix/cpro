@@ -195,7 +195,7 @@ gem 'cpro', path: 'vendor/cpro'
 Terminal
 
 ```bash
-git submodule add git@bitbucket.org:zoidenberg/cpro.git vendor/cpro
+git submodule add git@github.com:nmix/cpro.git vendor/cpro
 bundle
 ```
 
@@ -210,7 +210,7 @@ git submodule update --remote vendor/cpro
 ## Тестирование
 
 ```bash
-git clone git@bitbucket.org:zoidenberg/cpro.git
+git clone git@github.com:nmix/cpro.git
 cd cpro
 bundle
 bundle exec rspec spec
